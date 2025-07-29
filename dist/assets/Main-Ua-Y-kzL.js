@@ -1,0 +1,1 @@
+import{_ as o,a as t,b as n,o as a}from"./index-DHeZEGD7.js";const s={},c={class:"main-view"};function r(i,e){return a(),t("div",c,e[0]||(e[0]=[n("h1",null,"Main Section",-1),n("h3",null,"Nothing to see here... 👀",-1)]))}const l=o(s,[["render",r],["__scopeId","data-v-c7a86f48"]]);export{l as default};
