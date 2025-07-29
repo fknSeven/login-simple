@@ -17,6 +17,7 @@ async function makeRequest<T>(method: 'GET' | SendMethod, url: string, data?: ob
     },
     body: data ? JSON.stringify(data) : null
   })
+  console.log(req)
   let res: Response | null
   try {
       // res = await fetch(req)
