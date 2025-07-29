@@ -1,6 +1,6 @@
 <template>
 <div class="main-view">
-  <h1>MAIN SECTION</h1>
+  <h1>Main Section</h1>
   <h3>Nothing to see here... &#128064</h3>
 </div>
 </template>
