@@ -170,7 +170,7 @@ type SendRequest = {
             @click="passVisible = !passVisible">
         </div>
         <button
-          type='button'
+          type='submit'
           :class="['submit-button', {loading: buttonLoading, disabled: !buttonActive}]"
           :disabled="!buttonActive"
           @click="handleSubmit">
