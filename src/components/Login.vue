@@ -19,9 +19,12 @@ const buttonLoading = ref(false)
 
 const passVisible = ref(false)
 
-const passwordValidationMessage = computed(() => {
-  if (!firstTime.value || password.value.length === 0) return []
+const emailValid = computed(() => email.value.length > 0 && email.value.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
+
+const inputValidationMessage = computed(() => {
+  if (password.value.length === 0) return []
   const validations: string[] = []
+  validations.push(!emailValid.value ? 'Please enter a valid email' : '')
   validations.push(password.value.length < 10 ? 'Password must be at least 10 characters long' : '') // too short
   validations.push(password.value.length > 24 ? 'Password must be at most 24 characters long' : '') // too long
   validations.push(password.value.includes(' ') ? 'Password cannot contain spaces' : '') // has spaces
@@ -32,12 +35,11 @@ const passwordValidationMessage = computed(() => {
   for (const criteria of validations) {
     if (criteria) message.push(criteria)
   }
-  return message
+  return firstTime.value ? message : message.filter(criteria => criteria.includes('email'))
 })
 const buttonActive = computed(() => {
-  const emailValid = email.value.length > 0 && email.value.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-  if (firstTime) return password.value.length > 0 && passwordValidationMessage.value.length === 0 && emailValid
-  return password.value.length > 0 && emailValid
+  if (firstTime.value) return password.value.length > 0 && inputValidationMessage.value.length === 0
+  return password.value.length > 0 && emailValid.value
 })
 
 async function handleSubmit(e: MouseEvent) {
@@ -134,7 +136,7 @@ type SendRequest = {
         </p>
       </div>
       <div v-else class="header">
-        <h1>{{firstTime ? 'REGISTRATION' : 'LOGIN'}}</h1>
+        <h1>{{firstTime ? 'SIGN UP' : 'LOGIN'}}</h1>
         <h4>Please enter your email and password</h4>
       </div>
       </transition>
@@ -143,7 +145,7 @@ type SendRequest = {
         <label for="email">Email</label>
         <input
           v-model="email"
-          autocomplete="on"
+          autocomplete="user"
           required
           id="email"
           type="email"
@@ -159,22 +161,28 @@ type SendRequest = {
             :type="passVisible ? 'text' : 'password'"
             id="password"
             :aria-invalid="ariaInvalidPassword"
-          >        
-          <img
-            :src="passVisible ? EyeClosedImage : EyeOpenedImage"
-            :alt="`${passVisible ? 'hide' : 'show'}-password`"
-            width="25px"
-            height="15px"
+          >
+          <button
+            type="button" 
             class="show-password"
-            :style="{opacity: passVisible ? '0.4' : '1'}"
-            @click="passVisible = !passVisible">
+            :aria-label="`${passVisible ? 'hide' : 'show'}-password`"
+          >
+            <img
+              :src="passVisible ? EyeClosedImage : EyeOpenedImage"
+              :alt="`${passVisible ? 'hide' : 'show'} password`"
+              width="25px"
+              height="15px"
+              :style="{opacity: passVisible ? '0.4' : '1'}"
+              @click="passVisible = !passVisible"
+            >
+          </button>
         </div>
         <button
           type='submit'
           :class="['submit-button', {loading: buttonLoading, disabled: !buttonActive}]"
           :disabled="!buttonActive"
           @click="handleSubmit">
-          {{firstTime ? 'Register' : 'Log In'}}
+          {{firstTime ? 'Sign Up' : 'Log In'}}
         </button>
       </form>
     </div>
@@ -182,7 +190,7 @@ type SendRequest = {
       <ul class="validation-messages">
           <TransitionGroup name="list">
             <li
-              v-for="line, i in passwordValidationMessage"
+              v-for="line, i in inputValidationMessage"
               :key="`validation-${i}`"
               class="validation-item"
             >
@@ -305,6 +313,8 @@ input {
 }
 
 .show-password {
+  background-color: transparent;
+  border: none;
   cursor: pointer;
   position: absolute;
   right: 3%;
