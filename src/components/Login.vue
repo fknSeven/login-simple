@@ -63,6 +63,8 @@ async function handleSubmit(e: MouseEvent) {
   if (!response.ok) {    
     if (!response.status || response.status === 500) {
       serverMessage.value = 'Something went wrong, please try again.'
+      email.value = ''
+      password.value = ''
       ariaInvalidEmail.value = true
       ariaInvalidPassword.value = true
     }
@@ -78,6 +80,8 @@ async function handleSubmit(e: MouseEvent) {
     }
     else {
       serverMessage.value = 'Something went wrong, please try again.'
+      email.value = ''
+      password.value = ''
       ariaInvalidEmail.value = true
       ariaInvalidPassword.value = true
     }
